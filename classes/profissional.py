@@ -1,8 +1,8 @@
 from pessoa import Pessoa
 
 class Profissional(Pessoa):
-    def __init__(self, nome, celular, pdf, especialidade, registro_profissional):
-        super().__init__(nome, celular, pdf)
+    def __init__(self, nome, celular, cpf, especialidade, registro_profissional):
+        super().__init__(nome, celular, cpf)
         self.__especialidade = especialidade
         self.__registro_profissional = registro_profissional
 
@@ -15,8 +15,8 @@ class Profissional(Pessoa):
         return super().celular
 
     @property
-    def pdf(self):
-        return super().pdf
+    def cpf(self):
+        return super().cpf
 
     @property
     def especialidade(self):

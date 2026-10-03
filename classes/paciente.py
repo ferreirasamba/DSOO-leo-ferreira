@@ -1,8 +1,8 @@
 from pessoa import Pessoa
 
 class Paciente(Pessoa):
-    def __init__(self, nome, celular, pdf):
-        super().__init__(nome, celular, pdf)
+    def __init__(self, nome, celular, cpf):
+        super().__init__(nome, celular, cpf)
 
     @property
     def nome(self):
@@ -13,5 +13,5 @@ class Paciente(Pessoa):
         return super().celular
 
     @property
-    def pdf(self):
-        return super().pdf
+    def cpf(self):
+        return super().cpf

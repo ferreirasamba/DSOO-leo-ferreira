@@ -1,8 +1,8 @@
 from abstractClasses.abstractPessoa import Pessoa as AbstractPessoa
 
 class Pessoa(AbstractPessoa):
-    def __init__(self, nome, celular, pdf):
-        super().__init__(nome, celular, pdf)
+    def __init__(self, nome, celular, cpf):
+        super().__init__(nome, celular, cpf)
 
     @property
     def nome(self):
@@ -13,5 +13,5 @@ class Pessoa(AbstractPessoa):
         return super().celular
 
     @property
-    def pdf(self):
+    def cpf(self):
         return super().pdf
