@@ -10,18 +10,18 @@ class Paciente(Pessoa):
         self.__data_nascimento = data_nascimento
         
     @property
-    def nome(self):
+    def nome(self) -> str:
         return super().nome
 
     @property
-    def celular(self):
+    def celular(self) -> str:
         return super().celular
 
     @property
-    def cpf(self):
+    def cpf(self) -> str:
         return super().cpf
 
-    def data_nascimento(self):
+    def data_nascimento(self) -> date:
         return self.__data_nascimento
 
     def idade(self, data:date) -> int:
