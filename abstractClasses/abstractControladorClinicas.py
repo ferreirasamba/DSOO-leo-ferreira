@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from abstractClasses.abstractClinica import AbstractClinica
 
 class AbstractControladorClinicas(ABC):
     @abstractmethod
@@ -11,5 +12,5 @@ class AbstractControladorClinicas(ABC):
         return self.__clinicas    
 
     @abstractmethod
-    def registrar_clinica(self):
+    def registrar_clinica(self, clinica:AbstractClinica):
         pass
