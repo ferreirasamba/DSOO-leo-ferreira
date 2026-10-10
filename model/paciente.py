@@ -26,7 +26,7 @@ class Paciente(Pessoa):
 
     def idade(self, data:date) -> int:
         c = self.__data_nascimento
-        fez_aniversario = (data.month, data.day) > (c.month, c.day)
+        fez_aniversario = (data.month, data.day) >= (c.month, c.day)
         return data.year - c.year - (0 if fez_aniversario else 1)
     
     def pode_atender_sozinho(self, data:date) -> bool:

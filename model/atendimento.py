@@ -19,31 +19,31 @@ class Atendimento(AbstractAtendimento):
         super().__init__(clinica, paciente, profissional, data, horario_inicio, horario_fim, tipo_atendimento, valor)
 
     @property
-    def clinica(self):
+    def clinica(self) -> Clinica:
         return super().clinica
 
     @property
-    def paciente(self):
+    def paciente(self) -> Paciente:
         return super().paciente
 
     @property
-    def profissional(self):
+    def profissional(self) -> Profissional:
         return super().profissional
 
     @property
-    def data(self):
+    def data(self) -> date:
         return super().data
 
     @property
-    def horario_inicio(self):
+    def horario_inicio(self) -> time:
         return super().horario_inicio
 
     @property
-    def horario_fim(self):
+    def horario_fim(self) -> time:
         return super().horario_fim
 
     @property
-    def tipo_atendimento(self):
+    def tipo_atendimento(self) -> TipoAtendimento:
         return super().tipo_atendimento
 
     @property
