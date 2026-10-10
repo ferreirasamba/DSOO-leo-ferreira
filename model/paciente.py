@@ -24,7 +24,7 @@ class Paciente(Pessoa):
     def data_nascimento(self):
         return self.__data_nascimento
 
-    def idade(self, data:date):
+    def idade(self, data:date) -> int:
         c = self.__data_nascimento
         fez_aniversario = (data.month, data.day) > (c.month, c.day)
         return data.year - c.year - (0 if fez_aniversario else 1)
