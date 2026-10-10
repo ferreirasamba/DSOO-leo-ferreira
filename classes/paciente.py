@@ -1,4 +1,4 @@
-from pessoa import Pessoa
+from abstractClasses.abstractPessoa import Pessoa
 
 class Paciente(Pessoa):
     def __init__(self, nome, celular, cpf):

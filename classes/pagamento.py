@@ -4,7 +4,7 @@ from classes.atendimento import Atendimento
 from classes.paciente import Paciente
 
 class Pagamento(AbstractPagamento):
-    def __init__(self, data, atendimento, paciente, valor):
+    def __init__(self, data, atendimento:Atendimento, paciente:Paciente , valor) -> None:
         super().__init__(data, atendimento, paciente, valor)
 
     @property

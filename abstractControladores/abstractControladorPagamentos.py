@@ -1,7 +1,5 @@
 from abc import ABC, abstractmethod
 from classes.pagamento import Pagamento
-from classes.pagamento import pagar
-
 
 class controladorPagamentos(ABC):
     @abstractmethod
@@ -15,4 +13,5 @@ class controladorPagamentos(ABC):
 
     @abstractmethod
     def registrar_pagamento(self, pagamento: Pagamento):
-        pass
+        self.__pagamentos.append(pagamento)
+        return 0

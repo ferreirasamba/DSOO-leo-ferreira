@@ -1,4 +1,4 @@
-from pessoa import Pessoa
+from abstractClasses.abstractPessoa import Pessoa
 
 class Profissional(Pessoa):
     def __init__(self, nome, celular, cpf, especialidade, registro_profissional):
