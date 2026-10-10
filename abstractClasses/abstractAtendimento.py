@@ -1,9 +1,10 @@
 from abc import ABC, abstractmethod
 from classes.tipoAtendimento import TipoAtendimento
-from abstractClinica import Clinica
+from classes.clinica import Clinica
 from classes.paciente import Paciente
 from classes.profissional import Profissional
 from datetime import date as Date
+from typing import List
 
 class Atendimento(ABC):
     @abstractmethod
@@ -24,6 +25,7 @@ class Atendimento(ABC):
         self.__horario_fim = horario_fim
         self.__tipo_atendimento = tipo_atendimento
         self.__valor = valor
+        self.__procedimentos = []
 
     @property
     @abstractmethod
@@ -64,3 +66,8 @@ class Atendimento(ABC):
     @abstractmethod
     def valor(self) -> float:
         return self.__valor
+
+    @property
+    @abstractmethod
+    def procedimentos(self) -> List:
+        return self.__procedimentos

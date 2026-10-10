@@ -6,5 +6,6 @@ class TipoAtendimento(ABC):
         self.__tipo_atendimento = tipo_atendimento
 
     @property
+    @abstractmethod
     def tipo_atendimento(self):
         return self.__tipo_atendimento

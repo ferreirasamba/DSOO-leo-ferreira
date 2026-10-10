@@ -13,7 +13,7 @@ class Atendimento(AbstractAtendimento):
                        horario_inicio:str, 
                        horario_fim:str, 
                        tipo_atendimento:TipoAtendimento, 
-                       valor:float):
+                       valor:float) -> None:
         
         super().__init__(clinica, paciente, profissional, data, horario_inicio, horario_fim, tipo_atendimento, valor)
 
@@ -48,4 +48,8 @@ class Atendimento(AbstractAtendimento):
     @property
     def valor(self):
         return super().valor
+
+    @property
+    def procedimentos(self):
+        return super().procedimentos
     
