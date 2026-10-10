@@ -43,5 +43,6 @@ class AbstractClinica(ABC):
     def fecha(self):
         return self.__fecha
 
+    @abstractmethod
     def funciona_em(self, abertura:time, fechamento:time) -> bool:
         return abertura > self.abre and fechamento < self.fecha
