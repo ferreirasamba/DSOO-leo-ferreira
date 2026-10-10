@@ -5,9 +5,9 @@ from classes.paciente import Paciente
 
 class Pagamento(ABC):
     @abstractmethod
-    def __init__(self, data:Date, atendimento:Atendimento, paciente:Paciente, valor:float):
+    def __init__(self, data:Date, campo_monetario:Atendimento, paciente:Paciente, valor:float):
         self.__data = data
-        self.__atendimento = atendimento
+        self.__campo_monetario = campo_monetario
         self.__paciente = paciente
         self.__valor = valor
 
@@ -32,11 +32,15 @@ class Pagamento(ABC):
         return self.__valor
 
     @abstractmethod
-    def pagar(self, total) -> float:
+    def pagar(self) -> float:
 
-        valor_restante = 0
-
-        if self.__valor < total:
-            valor_restante = total - self.__valor
-            return valor_restante        
-        return 0
+        campo_monetario = self.__campo_monetario
+        valor_campo = self.__campo_monetario.valor
+        divida = 0
+        troco = 0
+        if isinstance(campo_monetario, Atendimento):
+            if self.__valor < valor_campo:
+                divida += valor_campo - self.__valor
+            elif self.__valor > valor_campo:
+                troco += self.__valor - valor_campo
+            return self.__valor

@@ -1,10 +1,10 @@
-from abstractClasses.abstractPessoa import Pessoa
+from abstractClasses.pessoa import Pessoa
 
 class Profissional(Pessoa):
-    def __init__(self, nome, celular, cpf, especialidade, registro_profissional):
+    def __init__(self, nome, celular, cpf, especialidade, registro):
         super().__init__(nome, celular, cpf)
         self.__especialidade = especialidade
-        self.__registro_profissional = registro_profissional
+        self.__registro = registro
 
     @property
     def nome(self):
@@ -23,5 +23,5 @@ class Profissional(Pessoa):
         return self.__especialidade
 
     @property
-    def registro_profissional(self):
-        return self.__registro_profissional    
+    def registro(self):
+        return self.__registro   
