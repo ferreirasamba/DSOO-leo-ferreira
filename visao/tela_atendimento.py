@@ -31,12 +31,15 @@ class TelaAtendimento(AbstractTela):
     def mostra_detalhes(self, atendimento):
         self.mostra_titulo("Detalhes do atendimento")
         print(atendimento)
-        print(f"Pago: R$ {atendimento.valor_pago} | Restante: R$ {atendimento.valor_restante}")
+        print(f"Total: R$ {atendimento.valor_total} | Pago: R$ {atendimento.valor_pago} "
+              f"| Restante: R$ {atendimento.valor_restante}")
         print("Procedimentos:")
         if not atendimento.procedimentos:
             print("  (nenhum)")
         for procedimento in atendimento.procedimentos:
-            print(f"  - {procedimento}")
+            pago = atendimento.valor_pago_procedimento(procedimento)
+            restante = atendimento.valor_restante_procedimento(procedimento)
+            print(f"  - {procedimento} | Pago: R$ {pago} | Restante: R$ {restante}")
         print("Pagamentos:")
         if not atendimento.pagamentos:
             print("  (nenhum)")

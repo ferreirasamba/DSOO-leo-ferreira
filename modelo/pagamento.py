@@ -7,12 +7,14 @@ from utilidades import ErroDeRegra, dinheiro
 
 if TYPE_CHECKING:
     from modelo.atendimento import Atendimento
+    from modelo.procedimento import Procedimento
 
 class Pagamento(ABC):
     def __init__(self, data:date,
                        atendimento:Atendimento,
                        paciente:Paciente,
-                       valor):
+                       valor,
+                       procedimento:Procedimento | None = None):
         valor = dinheiro(valor)
         if valor <= 0:
             raise ErroDeRegra("Valor do pagamento deve ser positivo.")
@@ -20,6 +22,7 @@ class Pagamento(ABC):
         self.__atendimento = atendimento
         self.__paciente = paciente
         self.__valor = valor
+        self.__procedimento = procedimento
 
     @property
     def data(self):
@@ -37,10 +40,16 @@ class Pagamento(ABC):
     def valor(self):
         return self.__valor
 
+    @property
+    def procedimento(self):
+        return self.__procedimento
+
     @abstractmethod
     def modalidade(self) -> str:
         pass
 
     def __str__(self):
-        return f"{self.data:%d/%m/%Y} | R$ {self.valor} | {self.modalidade()}"
-    
+        destino = (f" | Procedimento: {self.procedimento.descricao}"
+                   if self.procedimento is not None else " | Atendimento")
+        return f"{self.data:%d/%m/%Y} | R$ {self.valor} | {self.modalidade()}{destino}"
+

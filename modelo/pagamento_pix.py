@@ -7,13 +7,15 @@ from utilidades import ErroDeRegra, so_digitos
 
 if TYPE_CHECKING:
     from modelo.atendimento import Atendimento
+    from modelo.procedimento import Procedimento
 class PagamentoPix(Pagamento):
     def __init__(self, data:date, 
                        atendimento:Atendimento, 
                        paciente:Paciente, 
                        valor, 
-                       cpf_pagador: str):
-        super().__init__(data, atendimento, paciente, valor)
+                       cpf_pagador: str,
+                       procedimento: Procedimento | None = None):
+        super().__init__(data, atendimento, paciente, valor, procedimento)
         cpf = so_digitos(cpf_pagador)
         if len(cpf) != 11:
             raise ErroDeRegra("CPF do pagador deve ter 11 dígitos.")

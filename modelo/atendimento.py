@@ -87,12 +87,36 @@ class Atendimento:
         self.__procedimentos.append(procedimento)
 
     @property
+    def valor_procedimentos(self) -> Decimal:
+        return sum((p.custo for p in self.__procedimentos), Decimal("0.00"))
+
+    @property
+    def valor_total(self) -> Decimal:
+        return self.__valor + self.valor_procedimentos
+
+    def valor_pago_procedimento(self, procedimento: Procedimento) -> Decimal:
+        return sum((p.valor for p in self.__pagamentos
+                    if p.procedimento is procedimento), Decimal("0.00"))
+
+    def valor_restante_procedimento(self, procedimento: Procedimento) -> Decimal:
+        return procedimento.custo - self.valor_pago_procedimento(procedimento)
+
+    @property
+    def valor_pago_atendimento(self) -> Decimal:
+        return sum((p.valor for p in self.__pagamentos
+                    if p.procedimento is None), Decimal("0.00"))
+
+    @property
+    def valor_restante_atendimento(self) -> Decimal:
+        return self.__valor - self.valor_pago_atendimento
+
+    @property
     def valor_pago(self) -> Decimal:
         return sum((p.valor for p in self.__pagamentos), Decimal("0.00"))
 
     @property
     def valor_restante(self) -> Decimal:
-        return self.__valor - self.valor_pago
+        return self.valor_total - self.valor_pago
 
     @property
     def quitado(self) -> bool:
@@ -105,11 +129,18 @@ class Atendimento:
             raise ErroDeRegra("Paciente do pagamento difere do paciente do atendimento.")
         if pagamento.data > self.__data:
             raise ErroDeRegra("Pagamento deve ser feito até a data do atendimento.")
-        if pagamento.valor > self.valor_restante:
-            raise ErroDeRegra(f"Valor excede o restante (R$ {self.valor_restante}).")
+        procedimento = pagamento.procedimento
+        if procedimento is None:
+            restante = self.valor_restante_atendimento
+        else:
+            if procedimento not in self.__procedimentos:
+                raise ErroDeRegra("Procedimento não pertence a este atendimento.")
+            restante = self.valor_restante_procedimento(procedimento)
+        if pagamento.valor > restante:
+            raise ErroDeRegra(f"Valor excede o restante (R$ {restante}).")
         self.__pagamentos.append(pagamento)
 
     def __str__(self):
         return (f"{self.data:%d/%m/%Y} {self.hora_inicio:%H:%M}-{self.hora_fim:%H:%M} | "
                 f"{self.clinica.nome} | {self.tipo} | {self.paciente.nome} c/ "
-                f"{self.profissional.nome} | R$ {self.valor}")
+                f"{self.profissional.nome} | R$ {self.valor_total}")

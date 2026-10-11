@@ -7,14 +7,16 @@ from utilidades import ErroDeRegra, so_digitos
 
 if TYPE_CHECKING:
     from modelo.atendimento import Atendimento
+    from modelo.procedimento import Procedimento
 class PagamentoCartao(Pagamento):
     def __init__(self, data:date, 
                        atendimento:Atendimento, 
                        paciente:Paciente, 
                        valor, 
                        numero_cartao: str, 
-                       bandeira: str):
-        super().__init__(data, atendimento, paciente, valor)
+                       bandeira: str,
+                       procedimento: Procedimento | None = None):
+        super().__init__(data, atendimento, paciente, valor, procedimento)
         numero = so_digitos(numero_cartao)
         if not 13 <= len(numero) <= 19:
             raise ErroDeRegra("Número de cartão inválido.")
