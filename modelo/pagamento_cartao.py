@@ -18,14 +18,14 @@ class PagamentoCartao(Pagamento):
         numero = so_digitos(numero_cartao)
         if not 13 <= len(numero) <= 19:
             raise ErroDeRegra("Número de cartão inválido.")
-        self.__numero = numero
+        self.__ultimos_digitos = numero[-4:]
         self.__bandeira = bandeira
 
     @property
-    def numero_cartao(self): return self.__numero
+    def numero_cartao(self): return f"**** **** **** {self.__ultimos_digitos}"
 
     @property
     def bandeira(self): return self.__bandeira
 
     def modalidade(self):
-        return f"Cartão de crédito {self.__bandeira} (final {self.__numero[-4:]})"
+        return f"Cartão de crédito {self.__bandeira} (final {self.__ultimos_digitos})"

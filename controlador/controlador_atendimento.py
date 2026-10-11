@@ -38,9 +38,12 @@ class ControladorAtendimento(AbstractControlador):
 
     def __verifica_conflito(self, novo: Atendimento):
         for a in self.__atendimentos:
-            if (a.profissional is novo.profissional and a.data == novo.data
+            if ((a.profissional is novo.profissional or a.paciente is novo.paciente)
+                    and a.data == novo.data
                     and a.hora_inicio < novo.hora_fim and novo.hora_inicio < a.hora_fim):
-                raise ErroDeRegra("Profissional já tem atendimento nesse horário.")
+                if a.profissional is novo.profissional:
+                    raise ErroDeRegra("Profissional já tem atendimento nesse horário.")
+                raise ErroDeRegra("Paciente já tem atendimento nesse horário.")
 
     def registrar_procedimento(self):
         atendimento = self.exige_escolha(self.seleciona())

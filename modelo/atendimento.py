@@ -18,6 +18,8 @@ class Atendimento:
                        tipo:TipoAtendimento,
                        valor):
         valor = dinheiro(valor)
+        if data < date.today():
+            raise ErroDeRegra("Data do atendimento não pode estar no passado.")
         if valor < 0:
             raise ErroDeRegra("Valor do atendimento não pode ser negativo.")
         if hora_inicio >= hora_fim:
@@ -110,4 +112,4 @@ class Atendimento:
     def __str__(self):
         return (f"{self.data:%d/%m/%Y} {self.hora_inicio:%H:%M}-{self.hora_fim:%H:%M} | "
                 f"{self.clinica.nome} | {self.tipo} | {self.paciente.nome} c/ "
-                f"{self.profissional.nome} | R$ {self.valor}")    
+                f"{self.profissional.nome} | R$ {self.valor}")
