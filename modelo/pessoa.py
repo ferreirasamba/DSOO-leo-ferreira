@@ -31,6 +31,10 @@ class Pessoa(ABC):
     def cpf(self):
         return self.__cpf
 
+    @property
+    def data_nascimento(self):
+        return self.__data_nascimento
+
     def idade_em(self, data:date) -> int:
         n = self.__data_nascimento
         aniversario_ja_passou = (data.month, data.day) >= (n.month, n.day)

@@ -10,7 +10,7 @@ from visao.tela_sistema import TelaSistema
 
 
 class ControladorSistema(AbstractControlador):
-    def __init__(self, controlador_sistema):
+    def __init__(self):
         super().__init__(self)
         self.__tela = TelaSistema()
         self.__controlador_clinica = ControladorClinica(self)

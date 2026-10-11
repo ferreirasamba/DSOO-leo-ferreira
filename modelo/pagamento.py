@@ -1,8 +1,12 @@
+from __future__ import annotations
 from abc import ABC, abstractmethod
 from datetime import date
 from modelo.paciente import Paciente
-from modelo.atendimento import Atendimento
+from typing import TYPE_CHECKING
 from utilidades import ErroDeRegra, dinheiro
+
+if TYPE_CHECKING:
+    from modelo.atendimento import Atendimento
 
 class Pagamento(ABC):
     def __init__(self, data:date,
@@ -38,5 +42,5 @@ class Pagamento(ABC):
         pass
 
     def __str__(self):
-        return f"{self.data:%d/%m/%Y} | R$ {self.valor} | {self.modalidade}"
+        return f"{self.data:%d/%m/%Y} | R$ {self.valor} | {self.modalidade()}"
     
