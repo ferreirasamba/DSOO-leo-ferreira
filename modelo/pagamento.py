@@ -23,26 +23,79 @@ class Pagamento(ABC):
         self.__paciente = paciente
         self.__valor = valor
         self.__procedimento = procedimento
+        self._validar_campos(data, atendimento, paciente, valor, procedimento)
 
     @property
     def data(self):
         return self.__data
 
+    @data.setter
+    def data(self, data: date):
+        self._validar_campos(data, self.__atendimento, self.__paciente,
+                             self.__valor, self.__procedimento)
+        self.__data = data
+
     @property
     def atendimento(self):
         return self.__atendimento
+
+    @atendimento.setter
+    def atendimento(self, atendimento: Atendimento):
+        from modelo.atendimento import Atendimento as AtendimentoModelo
+        if not isinstance(atendimento, AtendimentoModelo):
+            raise ErroDeRegra("Atendimento inválido.")
+        if atendimento is self.__atendimento:
+            return
+        if self in self.__atendimento.pagamentos:
+            raise ErroDeRegra("Não é possível trocar o atendimento de um pagamento já registrado.")
+        self._validar_campos(self.__data, atendimento, self.__paciente,
+                             self.__valor, self.__procedimento)
+        self.__atendimento = atendimento
 
     @property
     def paciente(self):
         return self.__paciente
 
+    @paciente.setter
+    def paciente(self, paciente: Paciente):
+        self._validar_campos(self.__data, self.__atendimento, paciente,
+                             self.__valor, self.__procedimento)
+        self.__paciente = paciente
+
     @property
     def valor(self):
         return self.__valor
 
+    @valor.setter
+    def valor(self, valor):
+        valor = dinheiro(valor)
+        if valor <= 0:
+            raise ErroDeRegra("Valor do pagamento deve ser positivo.")
+        self._validar_campos(self.__data, self.__atendimento, self.__paciente,
+                             valor, self.__procedimento)
+        self.__valor = valor
+
     @property
     def procedimento(self):
         return self.__procedimento
+
+    @procedimento.setter
+    def procedimento(self, procedimento: Procedimento | None):
+        self._validar_campos(self.__data, self.__atendimento, self.__paciente,
+                             self.__valor, procedimento)
+        self.__procedimento = procedimento
+
+    def _validar_campos(self, data, atendimento, paciente, valor, procedimento):
+        from modelo.atendimento import Atendimento as AtendimentoModelo
+        if not isinstance(atendimento, AtendimentoModelo):
+            raise ErroDeRegra("Atendimento inválido.")
+        if not isinstance(paciente, Paciente):
+            raise ErroDeRegra("Paciente inválido.")
+        if not isinstance(data, date):
+            raise ErroDeRegra("Data do pagamento inválida.")
+        if valor <= 0:
+            raise ErroDeRegra("Valor do pagamento deve ser positivo.")
+        atendimento._validar_pagamento(self, data, paciente, valor, procedimento)
 
     @abstractmethod
     def modalidade(self) -> str:

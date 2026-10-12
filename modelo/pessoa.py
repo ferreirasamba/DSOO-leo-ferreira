@@ -23,17 +23,40 @@ class Pessoa(ABC):
     def nome(self):
         return self.__nome
 
+    @nome.setter
+    def nome(self, nome: str):
+        if not nome.strip():
+            raise ErroDeRegra("Nome não pode ser vazio.")
+        self.__nome = nome.strip()
+
     @property
     def celular(self):
         return self.__celular
+
+    @celular.setter
+    def celular(self, celular: str):
+        self.__celular = celular
 
     @property
     def cpf(self):
         return self.__cpf
 
+    @cpf.setter
+    def cpf(self, cpf: str):
+        cpf = so_digitos(cpf)
+        if len(cpf) != 11:
+            raise ErroDeRegra("CPF deve ter 11 dígitos.")
+        self.__cpf = cpf
+
     @property
     def data_nascimento(self):
         return self.__data_nascimento
+
+    @data_nascimento.setter
+    def data_nascimento(self, data_nascimento: date):
+        if data_nascimento > date.today():
+            raise ErroDeRegra("Data de nascimento no futuro.")
+        self.__data_nascimento = data_nascimento
 
     def idade_em(self, data:date) -> int:
         n = self.__data_nascimento
