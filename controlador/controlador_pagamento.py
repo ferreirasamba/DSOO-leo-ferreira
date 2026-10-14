@@ -1,4 +1,3 @@
-from decimal import Decimal
 from controlador.abstract_controlador import AbstractControlador
 from modelo.pagamento_cartao import PagamentoCartao
 from modelo.pagamento_dinheiro import PagamentoDinheiro
@@ -66,26 +65,34 @@ class ControladorPagamento(AbstractControlador):
             self.controlador_sistema.controlador_atendimento.seleciona())
         pagamento = self.exige_escolha(self.__tela.seleciona_pagamento(atendimento))
         dados = self.__tela.le_dados_edicao_pagamento()
-        procedimento = pagamento.procedimento
-        limite = atendimento.valor if procedimento is None else procedimento.custo
-        pago_por_outros = sum(
-            (p.valor for p in atendimento.pagamentos
-             if p is not pagamento and p.procedimento is procedimento),
-            start=Decimal("0.00"),
-        )
-        if dados["valor"] <= 0 or dados["valor"] > limite - pago_por_outros:
-            raise ErroDeRegra("Valor inválido ou acima do restante do item.")
-        if dados["data"] > atendimento.data:
-            raise ErroDeRegra("Pagamento deve ser feito até a data do atendimento.")
-
+        cpf_pagador = None
+        cartao = None
         if isinstance(pagamento, PagamentoPix):
-            pagamento.cpf_pagador = self.__tela.le_cpf_pagador()
+            cpf_pagador = self.__tela.le_cpf_pagador()
         elif isinstance(pagamento, PagamentoCartao):
             cartao = self.__tela.le_dados_edicao_cartao()
-            pagamento.numero_cartao = cartao["numero"]
-            pagamento.bandeira = cartao["bandeira"]
-        pagamento.data = dados["data"]
-        pagamento.valor = dados["valor"]
+
+        valor_anterior = pagamento.valor
+        data_anterior = pagamento.data
+        cpf_anterior = pagamento.cpf_pagador if isinstance(pagamento, PagamentoPix) else None
+        cartao_anterior = (pagamento.numero_cartao, pagamento.bandeira) \
+            if isinstance(pagamento, PagamentoCartao) else None
+        try:
+            pagamento.valor = dados["valor"]
+            pagamento.data = dados["data"]
+            if isinstance(pagamento, PagamentoPix):
+                pagamento.cpf_pagador = cpf_pagador
+            elif isinstance(pagamento, PagamentoCartao):
+                pagamento.numero_cartao = cartao["numero"]
+                pagamento.bandeira = cartao["bandeira"]
+        except ErroDeRegra:
+            pagamento.valor = valor_anterior
+            pagamento.data = data_anterior
+            if isinstance(pagamento, PagamentoPix):
+                pagamento.cpf_pagador = cpf_anterior
+            elif isinstance(pagamento, PagamentoCartao):
+                pagamento.numero_cartao, pagamento.bandeira = cartao_anterior
+            raise
         self.__tela.mostra_mensagem("Pagamento alterado!")
 
     def excluir(self):

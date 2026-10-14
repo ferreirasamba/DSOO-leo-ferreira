@@ -25,6 +25,7 @@ class ControladorAtendimento(AbstractControlador):
             6: self.excluir,
             7: self.alterar_procedimento,
             8: self.excluir_procedimento,
+            9: self.listar_procedimentos,
         })
 
     def agendar(self):
@@ -36,20 +37,19 @@ class ControladorAtendimento(AbstractControlador):
         d = self.__tela.le_dados_agendamento()
         novo = Atendimento(clinica, paciente, profissional, d["data"],
                            d["inicio"], d["fim"], tipo, d["valor"])
-        self.__verifica_conflito(novo)
+        self.__verifica_conflitos(novo.profissional, novo.paciente, novo.data,
+                                  novo.hora_inicio, novo.hora_fim)
         self.__atendimentos.append(novo)
         self.__tela.mostra_mensagem("Atendimento agendado!")
 
-    def __verifica_conflito(self, novo: Atendimento, ignorar=None):
-        for a in self.__atendimentos:
-            if a is ignorar:
+    def __verifica_conflitos(self, profissional, paciente, data, inicio, fim,
+                             ignorar=None):
+        for atendimento in self.__atendimentos:
+            if atendimento is ignorar:
                 continue
-            if ((a.profissional is novo.profissional or a.paciente is novo.paciente)
-                    and a.data == novo.data
-                    and a.hora_inicio < novo.hora_fim and novo.hora_inicio < a.hora_fim):
-                if a.profissional is novo.profissional:
-                    raise ErroDeRegra("Profissional já tem atendimento nesse horário.")
-                raise ErroDeRegra("Paciente já tem atendimento nesse horário.")
+            erro = atendimento.conflita_com(profissional, paciente, data, inicio, fim)
+            if erro is not None:
+                raise ErroDeRegra(erro)
 
     def registrar_procedimento(self):
         atendimento = self.exige_escolha(self.seleciona())
@@ -62,6 +62,18 @@ class ControladorAtendimento(AbstractControlador):
     def listar(self):
         self.__tela.mostra_atendimentos(self.__atendimentos)
 
+    def listar_procedimentos(self):
+        linhas = []
+        for atendimento in self.__atendimentos:
+            for procedimento in atendimento.procedimentos:
+                pago = atendimento.valor_pago_procedimento(procedimento)
+                restante = atendimento.valor_restante_procedimento(procedimento)
+                linhas.append(
+                    f"{atendimento} -> {procedimento} | Pago: R$ {pago} "
+                    f"| Restante: R$ {restante}"
+                )
+        self.__tela.mostra_procedimentos(linhas)
+
     def alterar(self):
         atendimento = self.exige_escolha(self.seleciona())
         sistema = self.controlador_sistema
@@ -70,9 +82,8 @@ class ControladorAtendimento(AbstractControlador):
         profissional = self.exige_escolha(sistema.controlador_profissional.seleciona())
         tipo = self.exige_escolha(sistema.controlador_tipo_atendimento.seleciona())
         d = self.__tela.le_dados_edicao_atendimento()
-        novo = Atendimento(clinica, paciente, profissional, d["data"], d["inicio"],
-                           d["fim"], tipo, d["valor"])
-        self.__verifica_conflito(novo, ignorar=atendimento)
+        self.__verifica_conflitos(profissional, paciente, d["data"], d["inicio"],
+                                  d["fim"], ignorar=atendimento)
         atendimento.atualizar(clinica, paciente, profissional, d["data"],
                               d["inicio"], d["fim"], tipo, d["valor"])
         self.__tela.mostra_mensagem("Atendimento alterado!")

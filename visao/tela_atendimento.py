@@ -8,7 +8,8 @@ class TelaAtendimento(AbstractTela):
             ["Agendar atendimento", "Registrar procedimento realizado",
              "Listar atendimentos", "Ver detalhes de um atendimento",
              "Alterar atendimento", "Excluir atendimento",
-             "Alterar procedimento", "Excluir procedimento"],
+             "Alterar procedimento", "Excluir procedimento",
+             "Listar procedimentos"],
         )
 
     def le_dados_agendamento(self) -> dict:
@@ -49,6 +50,9 @@ class TelaAtendimento(AbstractTela):
 
     def mostra_atendimentos(self, atendimentos: list):
         self.mostra_lista("Atendimentos", [str(a) for a in atendimentos])
+
+    def mostra_procedimentos(self, linhas: list):
+        self.mostra_lista("Procedimentos realizados", linhas)
 
     def mostra_detalhes(self, atendimento):
         self.mostra_titulo("Detalhes do atendimento")

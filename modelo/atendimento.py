@@ -201,6 +201,15 @@ class Atendimento:
         self.__tipo = tipo
         self.__valor = valor
 
+    def conflita_com(self, profissional, paciente, data, inicio, fim) -> str | None:
+        mesmo_recurso = (self.__profissional is profissional or self.__paciente is paciente)
+        sobreposicao = self.__hora_inicio < fim and inicio < self.__hora_fim
+        if self.__data == data and mesmo_recurso and sobreposicao:
+            if self.__profissional is profissional:
+                return "Profissional já tem atendimento nesse horário."
+            return "Paciente já tem atendimento nesse horário."
+        return None
+
     def remover_pagamento(self, pagamento: Pagamento):
         if pagamento not in self.__pagamentos:
             raise ErroDeRegra("Pagamento não pertence a este atendimento.")
