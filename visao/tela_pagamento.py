@@ -50,13 +50,6 @@ class TelaPagamento(AbstractTela):
             "valor": self.le_decimal("Valor pago (R$): "),
         }
 
-    def le_dados_edicao_pagamento(self) -> dict:
-        self.mostra_titulo("Novos dados do pagamento")
-        return {
-            "data": self.le_data("Data do pagamento (dd/mm/aaaa): "),
-            "valor": self.le_decimal("Valor pago (R$): "),
-        }
-
     def le_dados_edicao_cartao(self) -> dict:
         return {
             "numero": self.le_texto("Número do cartão: "),

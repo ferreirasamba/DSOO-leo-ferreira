@@ -30,11 +30,11 @@ class ControladorRelatorio(AbstractControlador):
         self.__tela.mostra_ranking_clinicas(contagem.most_common(self.TOP))
 
     def atendimentos_mais_caros(self):
-        ordenados = sorted(self.__atendimentos(), key=lambda a: a.valor, reverse=True)
+        ordenados = sorted(self.__atendimentos(), key=lambda a: a.valor_total, reverse=True)
         self.__tela.mostra_atendimentos("Atendimentos mais caros", ordenados[:self.TOP])
 
     def atendimentos_mais_baratos(self):
-        ordenados = sorted(self.__atendimentos(), key=lambda a: a.valor)
+        ordenados = sorted(self.__atendimentos(), key=lambda a: a.valor_total)
         self.__tela.mostra_atendimentos("Atendimentos mais baratos", ordenados[:self.TOP])
 
     def procedimentos_mais_realizados(self):

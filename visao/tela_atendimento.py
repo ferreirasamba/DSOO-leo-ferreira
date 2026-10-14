@@ -43,22 +43,6 @@ class TelaAtendimento(AbstractTela):
             "custo": self.le_decimal("Custo (R$): "),
         }
 
-    def le_dados_edicao_atendimento(self) -> dict:
-        self.mostra_titulo("Novos dados do atendimento")
-        return {
-            "data": self.le_data("Data (dd/mm/aaaa): "),
-            "inicio": self.le_hora("Horário de início (HH:MM): "),
-            "fim": self.le_hora("Horário de fim (HH:MM): "),
-            "valor": self.le_decimal("Valor do atendimento (R$): "),
-        }
-
-    def le_dados_edicao_procedimento(self) -> dict:
-        self.mostra_titulo("Novos dados do procedimento")
-        return {
-            "descricao": self.le_texto("Descrição: "),
-            "custo": self.le_decimal("Custo (R$): "),
-        }
-
     def seleciona_procedimento(self, atendimento, titulo="Escolha o procedimento"):
         indice = self.escolhe_da_lista(titulo, [str(p) for p in atendimento.procedimentos])
         return None if indice is None else atendimento.procedimentos[indice]
