@@ -22,14 +22,14 @@ class PagamentoCartao(Pagamento):
 
     @property
     def numero_cartao(self):
-        return f"**** **** **** {self.__ultimos_digitos}"
+        return self.__numero_cartao
 
     @numero_cartao.setter
     def numero_cartao(self, numero_cartao: str):
         numero = so_digitos(numero_cartao)
         if not 13 <= len(numero) <= 19:
             raise ErroDeRegra("Número de cartão inválido.")
-        self.__ultimos_digitos = numero[-4:]
+        self.__numero_cartao = numero
 
     @property
     def bandeira(self):
@@ -43,4 +43,4 @@ class PagamentoCartao(Pagamento):
         self.__bandeira = bandeira
 
     def modalidade(self):
-        return f"Cartão de crédito {self.__bandeira} (final {self.__ultimos_digitos})"
+        return f"Cartão de crédito {self.__bandeira} (final {self.__numero_cartao[-4:]})"

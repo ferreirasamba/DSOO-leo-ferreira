@@ -1,3 +1,4 @@
+from decimal import Decimal
 from controlador.abstract_controlador import AbstractControlador
 from modelo.pagamento_cartao import PagamentoCartao
 from modelo.pagamento_dinheiro import PagamentoDinheiro
@@ -16,6 +17,8 @@ class ControladorPagamento(AbstractControlador):
             1: self.registrar,
             2: self.consultar,
             3: self.consultar_procedimento,
+            4: self.alterar,
+            5: self.excluir,
         })
 
     def registrar(self):
@@ -50,9 +53,48 @@ class ControladorPagamento(AbstractControlador):
             pagamento = PagamentoCartao(comuns["data"], atendimento, paciente, comuns["valor"],
                                         cartao["numero"], cartao["bandeira"], procedimento)
         atendimento.registrar_pagamento(pagamento)
+        if procedimento is None:
+            restante_destino = atendimento.valor_restante_atendimento
+        else:
+            restante_destino = atendimento.valor_restante_procedimento(procedimento)
         self.__tela.mostra_mensagem(
             f"Pagamento registrado! Restante do item: R$ {restante_destino}"
             f" | Restante total: R$ {atendimento.valor_restante}")
+
+    def alterar(self):
+        atendimento = self.exige_escolha(
+            self.controlador_sistema.controlador_atendimento.seleciona())
+        pagamento = self.exige_escolha(self.__tela.seleciona_pagamento(atendimento))
+        dados = self.__tela.le_dados_edicao_pagamento()
+        procedimento = pagamento.procedimento
+        limite = atendimento.valor if procedimento is None else procedimento.custo
+        pago_por_outros = sum(
+            (p.valor for p in atendimento.pagamentos
+             if p is not pagamento and p.procedimento is procedimento),
+            start=Decimal("0.00"),
+        )
+        if dados["valor"] <= 0 or dados["valor"] > limite - pago_por_outros:
+            raise ErroDeRegra("Valor inválido ou acima do restante do item.")
+        if dados["data"] > atendimento.data:
+            raise ErroDeRegra("Pagamento deve ser feito até a data do atendimento.")
+
+        if isinstance(pagamento, PagamentoPix):
+            pagamento.cpf_pagador = self.__tela.le_cpf_pagador()
+        elif isinstance(pagamento, PagamentoCartao):
+            cartao = self.__tela.le_dados_edicao_cartao()
+            pagamento.numero_cartao = cartao["numero"]
+            pagamento.bandeira = cartao["bandeira"]
+        pagamento.data = dados["data"]
+        pagamento.valor = dados["valor"]
+        self.__tela.mostra_mensagem("Pagamento alterado!")
+
+    def excluir(self):
+        atendimento = self.exige_escolha(
+            self.controlador_sistema.controlador_atendimento.seleciona())
+        pagamento = self.exige_escolha(self.__tela.seleciona_pagamento(atendimento))
+        if self.__tela.confirma_acao(f"Excluir o pagamento de R$ {pagamento.valor}?"):
+            atendimento.remover_pagamento(pagamento)
+            self.__tela.mostra_mensagem("Pagamento excluído!")
 
     def consultar(self):
         atendimento = self.exige_escolha(

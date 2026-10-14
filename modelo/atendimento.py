@@ -149,7 +149,62 @@ class Atendimento:
         return list(self.__pagamentos)
 
     def adicionar_procedimento(self, procedimento:Procedimento):
+        if not isinstance(procedimento, Procedimento):
+            raise ErroDeRegra("Procedimento inválido.")
         self.__procedimentos.append(procedimento)
+
+    def remover_procedimento(self, procedimento: Procedimento):
+        if procedimento not in self.__procedimentos:
+            raise ErroDeRegra("Procedimento não pertence a este atendimento.")
+        if any(p.procedimento is procedimento for p in self.__pagamentos):
+            raise ErroDeRegra("Não é possível excluir um procedimento com pagamentos registrados.")
+        self.__procedimentos.remove(procedimento)
+
+    def atualizar(self, clinica, paciente, profissional, data, hora_inicio,
+                  hora_fim, tipo, valor):
+        valor = dinheiro(valor)
+        if not isinstance(clinica, Clinica):
+            raise ErroDeRegra("Clínica inválida.")
+        if not isinstance(paciente, Paciente):
+            raise ErroDeRegra("Paciente inválido.")
+        if not isinstance(profissional, Profissional):
+            raise ErroDeRegra("Profissional inválido.")
+        if not isinstance(tipo, TipoAtendimento):
+            raise ErroDeRegra("Tipo de atendimento inválido.")
+        if data < date.today():
+            raise ErroDeRegra("Data do atendimento não pode estar no passado.")
+        if hora_inicio >= hora_fim:
+            raise ErroDeRegra("Horário de início deve ser antes do fim.")
+        if not clinica.funciona_em(hora_inicio, hora_fim):
+            raise ErroDeRegra("Horário do atendimento fica fora do funcionamento da clínica.")
+        if valor < 0:
+            raise ErroDeRegra("Valor do atendimento não pode ser negativo.")
+        if not paciente.pode_atender_sozinho(data):
+            responsavel = paciente.responsavel
+            if responsavel is None or responsavel.idade_em(data) < 18:
+                raise ErroDeRegra("Paciente menor de 18 anos precisa de responsável maior de idade.")
+        pago_no_atendimento = sum((p.valor for p in self.__pagamentos if p.procedimento is None),
+                                  Decimal("0.00"))
+        if valor < pago_no_atendimento:
+            raise ErroDeRegra("O valor não pode ser menor que os pagamentos já registrados.")
+        if any(p.data > data for p in self.__pagamentos):
+            raise ErroDeRegra("A data não pode ser anterior à data de um pagamento registrado.")
+        if paciente is not self.__paciente and self.__pagamentos:
+            raise ErroDeRegra("Não é possível trocar o paciente após registrar pagamentos.")
+
+        self.__clinica = clinica
+        self.__paciente = paciente
+        self.__profissional = profissional
+        self.__data = data
+        self.__hora_inicio = hora_inicio
+        self.__hora_fim = hora_fim
+        self.__tipo = tipo
+        self.__valor = valor
+
+    def remover_pagamento(self, pagamento: Pagamento):
+        if pagamento not in self.__pagamentos:
+            raise ErroDeRegra("Pagamento não pertence a este atendimento.")
+        self.__pagamentos.remove(pagamento)
 
     @staticmethod
     def _validar_horarios(inicio: time, fim: time, clinica: Clinica):

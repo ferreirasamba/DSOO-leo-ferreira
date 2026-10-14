@@ -3,7 +3,8 @@ from visao.abstract_tela import AbstractTela
 
 class TelaProfissional(AbstractTela):
     def mostra_menu(self) -> int:
-        return self.le_opcao_menu("PROFISSIONAIS", ["Cadastrar profissional", "Listar profissionais"])
+        return self.le_opcao_menu("PROFISSIONAIS", ["Cadastrar profissional", "Listar profissionais",
+                                                     "Alterar profissional", "Excluir profissional"])
 
     def le_dados_profissional(self) -> dict:
         self.mostra_titulo("Novo profissional")

@@ -3,7 +3,8 @@ from visao.abstract_tela import AbstractTela
 
 class TelaClinica(AbstractTela):
     def mostra_menu(self) -> int:
-        return self.le_opcao_menu("CLÍNICAS", ["Cadastrar clínica", "Listar clínicas"])
+        return self.le_opcao_menu("CLÍNICAS", ["Cadastrar clínica", "Listar clínicas",
+                                               "Alterar clínica", "Excluir clínica"])
 
     def le_dados_clinica(self) -> dict:
         self.mostra_titulo("Nova clínica")

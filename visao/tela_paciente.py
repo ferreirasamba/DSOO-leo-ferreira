@@ -3,7 +3,8 @@ from visao.abstract_tela import AbstractTela
 
 class TelaPaciente(AbstractTela):
     def mostra_menu(self) -> int:
-        return self.le_opcao_menu("PACIENTES", ["Cadastrar paciente", "Listar pacientes"])
+        return self.le_opcao_menu("PACIENTES", ["Cadastrar paciente", "Listar pacientes",
+                                                 "Alterar paciente", "Excluir paciente"])
 
     def le_dados_paciente(self) -> dict:
         self.mostra_titulo("Novo paciente")

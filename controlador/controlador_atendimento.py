@@ -21,6 +21,10 @@ class ControladorAtendimento(AbstractControlador):
             2: self.registrar_procedimento,
             3: self.listar,
             4: self.detalhar,
+            5: self.alterar,
+            6: self.excluir,
+            7: self.alterar_procedimento,
+            8: self.excluir_procedimento,
         })
 
     def agendar(self):
@@ -36,8 +40,10 @@ class ControladorAtendimento(AbstractControlador):
         self.__atendimentos.append(novo)
         self.__tela.mostra_mensagem("Atendimento agendado!")
 
-    def __verifica_conflito(self, novo: Atendimento):
+    def __verifica_conflito(self, novo: Atendimento, ignorar=None):
         for a in self.__atendimentos:
+            if a is ignorar:
+                continue
             if ((a.profissional is novo.profissional or a.paciente is novo.paciente)
                     and a.data == novo.data
                     and a.hora_inicio < novo.hora_fim and novo.hora_inicio < a.hora_fim):
@@ -55,6 +61,48 @@ class ControladorAtendimento(AbstractControlador):
 
     def listar(self):
         self.__tela.mostra_atendimentos(self.__atendimentos)
+
+    def alterar(self):
+        atendimento = self.exige_escolha(self.seleciona())
+        sistema = self.controlador_sistema
+        clinica = self.exige_escolha(sistema.controlador_clinica.seleciona())
+        paciente = self.exige_escolha(sistema.controlador_paciente.seleciona())
+        profissional = self.exige_escolha(sistema.controlador_profissional.seleciona())
+        tipo = self.exige_escolha(sistema.controlador_tipo_atendimento.seleciona())
+        d = self.__tela.le_dados_edicao_atendimento()
+        novo = Atendimento(clinica, paciente, profissional, d["data"], d["inicio"],
+                           d["fim"], tipo, d["valor"])
+        self.__verifica_conflito(novo, ignorar=atendimento)
+        atendimento.atualizar(clinica, paciente, profissional, d["data"],
+                              d["inicio"], d["fim"], tipo, d["valor"])
+        self.__tela.mostra_mensagem("Atendimento alterado!")
+
+    def excluir(self):
+        atendimento = self.exige_escolha(self.seleciona())
+        if self.__tela.confirma_acao(
+                "Excluir este atendimento e seus procedimentos e pagamentos?"):
+            self.__atendimentos.remove(atendimento)
+            self.__tela.mostra_mensagem("Atendimento excluído!")
+
+    def alterar_procedimento(self):
+        atendimento = self.exige_escolha(self.seleciona())
+        procedimento = self.exige_escolha(self.__tela.seleciona_procedimento(atendimento))
+        responsavel = self.exige_escolha(
+            self.controlador_sistema.controlador_profissional.seleciona())
+        d = self.__tela.le_dados_edicao_procedimento()
+        if d["custo"] < atendimento.valor_pago_procedimento(procedimento):
+            raise ErroDeRegra("O custo não pode ser menor que os pagamentos já registrados.")
+        procedimento.descricao = d["descricao"]
+        procedimento.custo = d["custo"]
+        procedimento.responsavel = responsavel
+        self.__tela.mostra_mensagem("Procedimento alterado!")
+
+    def excluir_procedimento(self):
+        atendimento = self.exige_escolha(self.seleciona())
+        procedimento = self.exige_escolha(self.__tela.seleciona_procedimento(atendimento))
+        if self.__tela.confirma_acao(f"Excluir o procedimento {procedimento.descricao}?"):
+            atendimento.remover_procedimento(procedimento)
+            self.__tela.mostra_mensagem("Procedimento excluído!")
 
     def detalhar(self):
         atendimento = self.exige_escolha(self.seleciona())

@@ -7,7 +7,8 @@ class TelaPagamento(AbstractTela):
         return self.le_opcao_menu(
             "PAGAMENTOS",
             ["Registrar pagamento", "Consultar pagamentos de um atendimento",
-             "Consultar pagamentos de um procedimento"],
+             "Consultar pagamentos de um procedimento", "Alterar pagamento",
+             "Excluir pagamento"],
         )
 
     def le_destino_pagamento(self, atendimento):
@@ -41,6 +42,31 @@ class TelaPagamento(AbstractTela):
             "data": self.le_data("Data do pagamento (dd/mm/aaaa): "),
             "valor": self.le_decimal("Valor pago (R$): "),
         }
+
+    def le_dados_edicao_pagamento(self) -> dict:
+        self.mostra_titulo("Novos dados do pagamento")
+        return {
+            "data": self.le_data("Data do pagamento (dd/mm/aaaa): "),
+            "valor": self.le_decimal("Valor pago (R$): "),
+        }
+
+    def le_dados_edicao_pagamento(self) -> dict:
+        self.mostra_titulo("Novos dados do pagamento")
+        return {
+            "data": self.le_data("Data do pagamento (dd/mm/aaaa): "),
+            "valor": self.le_decimal("Valor pago (R$): "),
+        }
+
+    def le_dados_edicao_cartao(self) -> dict:
+        return {
+            "numero": self.le_texto("Número do cartão: "),
+            "bandeira": self.le_texto("Bandeira (Visa, Mastercard...): "),
+        }
+
+    def seleciona_pagamento(self, atendimento):
+        indice = self.escolhe_da_lista(
+            "Escolha o pagamento", [str(p) for p in atendimento.pagamentos])
+        return None if indice is None else atendimento.pagamentos[indice]
 
     def le_cpf_pagador(self) -> str:
         return self.le_texto("CPF do pagador: ")

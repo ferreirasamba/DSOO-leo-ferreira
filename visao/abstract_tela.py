@@ -28,6 +28,15 @@ class AbstractTela(ABC):
                 return valor
             print("Valor vazio, tente novamente.")
 
+    def confirma_acao(self, mensagem: str) -> bool:
+        while True:
+            resposta = input(f"{mensagem} [s/N]: ").strip().lower()
+            if resposta in ("s", "sim"):
+                return True
+            if resposta in ("", "n", "nao", "não"):
+                return False
+            print("Responda com s ou n.")
+
     def le_inteiro(self, mensagem:str, validos=None) -> int:
         while True:
             try:

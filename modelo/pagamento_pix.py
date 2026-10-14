@@ -20,14 +20,14 @@ class PagamentoPix(Pagamento):
 
     @property
     def cpf_pagador(self): 
-        return f"***.***.***-{self.__final_cpf_pagador}"
+        return self.__cpf_pagador
 
     @cpf_pagador.setter
     def cpf_pagador(self, cpf_pagador: str):
         cpf = so_digitos(cpf_pagador)
         if len(cpf) != 11:
             raise ErroDeRegra("CPF do pagador deve ter 11 dígitos.")
-        self.__final_cpf_pagador = cpf[-2:]
+        self.__cpf_pagador = cpf
 
     def modalidade(self):
-        return f"PIX (CPF pagador {self.cpf_pagador})"
+        return f"PIX (CPF pagador ***.***.***-{self.__cpf_pagador[-2:]})"
