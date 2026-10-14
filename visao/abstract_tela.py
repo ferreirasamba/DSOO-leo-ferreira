@@ -50,14 +50,21 @@ class AbstractTela(ABC):
 
     def le_decimal(self, mensagem:str) -> Decimal:
         while True:
+            entrada = input(mensagem).strip().replace(",", ".")
+            if "e" in entrada.lower():
+                print("Notação científica não permitida.")
+                continue
             try:
-                valor = Decimal(input(mensagem).strip().replace(",", "."))
+                valor = Decimal(entrada)
             except InvalidOperation:
                 print("Digite um valor numérico (ex.: 150,50).")
                 continue
-            if valor.is_finite() and valor >= 0:
+            if valor.is_finite() and Decimal("0") <= valor <= Decimal("1000000000"):
                 return valor
-            print("Valor inválido.")
+            if valor > Decimal("1000000000"):
+                print("Valor máximo permitido: R$ 1.000.000.000,00.")
+            else:
+                print("Valor inválido.")
 
     def le_data(self, mensagem:str):
         while True:
