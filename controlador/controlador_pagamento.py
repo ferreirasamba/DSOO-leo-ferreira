@@ -92,7 +92,6 @@ class ControladorPagamento(AbstractControlador):
                 pagamento.cpf_pagador = cpf_anterior
             elif isinstance(pagamento, PagamentoCartao):
                 pagamento.numero_cartao, pagamento.bandeira = cartao_anterior
-            raise
         self.__tela.mostra_mensagem("Pagamento alterado!")
 
     def excluir(self):
